@@ -7,7 +7,7 @@ print('BLM "Watch" Script Starting...')
 
 while True:
     broken = False
-    browser = webdriver.Chrome("chromedriver")
+    browser = webdriver.Chrome("Desktop/Programming/Scripts/BLM/BLM/chromedriver")
     browser.get("https://www.youtube.com/watch?v=bCgLa25fDHM")
     actions = ActionChains(browser)
     time.sleep(5)
