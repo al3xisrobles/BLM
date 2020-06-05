@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-print('BLM "Watch" Script Starting...')
+print('\n\nBLM "Watch" Script Starting...\n\n')
 
 # Find XPath For 'Skip Ad' Element
 def skipAdXPath(browser):
@@ -75,6 +75,17 @@ def durationXPath(browser):
             except:
                 pass
 
+    # Combination (1j)
+    for l1 in alphabet:
+        for l2 in alphabet:
+            middle = l1 + l2
+            try:
+                dur = browser.find_element_by_xpath(first + middle + second).text
+                if ':' in dur:
+                    return dur
+            except:
+                pass
+
     print('ERROR: AD PRESENT BUT NO DURATION ELEMENT ABLE TO BE DETECTED')
     return 0
 
@@ -88,8 +99,8 @@ def numAds(browser, ads):
     if ad == True:
         t = durationXPath(browser)
         if t != 0:
-            print('Ad started to play. Duration:', t)
-            duration = timeToSeconds(t) + 5
+            print('Ad detected...Duration:', t)
+            duration = timeToSeconds(t) + 3
             adTimes.append(duration)
             time.sleep(duration + 8)
         return 1
@@ -131,7 +142,6 @@ while True:
         title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[22]/div[2]/div[1]/button').get_attribute("title")
         playing = False
     except:
-        print('Already Playing (failed to get title attribute)')
         playing = True
 
     # Press Space Again?
@@ -140,10 +150,14 @@ while True:
             print('Pressed Play')
             actions.send_keys(Keys.SPACE).perform()
         elif title == "Pause (k)":
-            print('Already Playing (successfuly retrieved title attribute)')
+            pass
         else:
             broken = True
             browser.quit()
+
+    # Mute Audio
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--mute-audio")
 
     # Play Full Video and then Quit
     if broken == False:
