@@ -35,9 +35,12 @@ while True:
     # Play Full Video and then Quit
     if broken == False:
         seconds = 0
-        time.sleep(5)
-        # Testing if the "Replay" button exists yet (it only does when the video is over)
+        time.sleep(3)
+
+        # Loop to test if the "Replay" button exists yet (it only does when the video is over)
         while True:
+
+            # Try to get 'Replay' element
             try:
                 replayButton = browser.find_element_by_xpath('//*[@id="movie_player"]/div[25]/div[2]/div[1]/button').get_attribute("title")
                 
