@@ -1,1 +1,1 @@
-With Selenium and ChromeDriver in Python 3, this script continuously watches the BLM video on Youtube that donates all Ad revenue to BLM funds. Once the video is over, the script automatically restarts the video.
+With Selenium and ChromeDriver in Python 3, this script 'watch.py' continuously watches the BLM video on Youtube that donates all Ad revenue to BLM funds. Once the video is over, the script automatically restarts the video.
