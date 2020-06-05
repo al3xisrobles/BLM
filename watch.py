@@ -1,3 +1,4 @@
+import math
 import time
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -33,15 +34,24 @@ while True:
 
     # Play Full Video and then Quit
     if broken == False:
+        seconds = 0
         time.sleep(5)
         # Testing if the "Replay" button exists yet (it only does when the video is over)
         while True:
             try:
                 replayButton = browser.find_element_by_xpath('//*[@id="movie_player"]/div[25]/div[2]/div[1]/button').get_attribute("title")
+                
+                # Time Estimate Variables
+                totalMin = seconds / 60
+                hours = totalMin / 60
+                remainingMinutes = round((hours % 1) * 60)
+
                 if replayButton == 'Replay':
+                    print('\nIt took {} hours and {} minutes to go through the entire video with ads'.format(math.floor(hours), round(remainingMinutes)))
                     print('Video Played in Full, Restarting...')
                     browser.quit()
                     break
             except:
                 pass
             time.sleep(1)
+            seconds += 1
