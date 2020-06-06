@@ -51,7 +51,7 @@ def durationXPath(browser):
         try:
             dur = browser.find_element_by_xpath(first + num + second).text
             if ':' in dur:
-                return dur
+                return dur, 0
         except:
             pass
 
@@ -60,7 +60,7 @@ def durationXPath(browser):
         try:
             dur = browser.find_element_by_xpath(first + letter + second).text
             if ':' in dur:
-                return dur  
+                return dur, 0
         except:
             pass
 
@@ -71,7 +71,18 @@ def durationXPath(browser):
             try:
                 dur = browser.find_element_by_xpath(first + middle + second).text
                 if ':' in dur:
-                    return dur  
+                    return dur, 10
+            except:
+                pass
+    
+    # Combination (j1)
+    for letter in alphabet:
+        for num in range(50):
+            middle = letter + str(num)
+            try:
+                dur = browser.find_element_by_xpath(first + middle + second).text
+                if ':' in dur:
+                    return dur, 15
             except:
                 pass
 
@@ -82,7 +93,7 @@ def durationXPath(browser):
             try:
                 dur = browser.find_element_by_xpath(first + middle + second).text
                 if ':' in dur:
-                    return dur
+                    return dur, 20
             except:
                 pass
 
@@ -97,12 +108,18 @@ def numAds(browser, ads):
 
     # If an ad played, add 1 to the counter and wait until the ad finishes
     if ad == True:
-        t = durationXPath(browser)
+        t, d = durationXPath(browser)
         if t != 0:
-            print('Ad detected...Duration:', t)
-            duration = timeToSeconds(t) + 3
+            duration = timeToSeconds(t) + d
+            min = math.floor(duration / 60)
+            sec = duration - (min * 60)
+
+            if sec < 10:
+                sec = '0' + str(sec)
+
+            print('Ad detected...Duration:', str(min) + ":" + str(sec))
             adTimes.append(duration)
-            time.sleep(duration + 8)
+            time.sleep(duration)
         return 1
     return 0
 
@@ -117,7 +134,7 @@ def timeToSeconds(t):
     sec = int(t[index + 1:])
     
     totalSec = (60 * min) + sec
-    return totalSec
+    return totalSec + 10
     
 def sum(lst):
     s = 0
