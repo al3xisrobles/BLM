@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-print('\n\nBLM "Watch" Script Starting...\n\n')
+print('\nBLM "Watch" Script Starting...\n')
 
 # Find XPath For 'Skip Ad' Element
 def skipAdXPath(browser):
@@ -174,15 +174,10 @@ while True:
             try:
                 replayButton = browser.find_element_by_xpath('//*[@id="movie_player"]/div[25]/div[2]/div[1]/button').get_attribute("title")
                 s = sum(adTimes)
-                # Time Estimate Variables
-                totalMin = seconds / 60
-                hours = totalMin / 60
-                remainingMinutes = round((hours % 1) * 60)
 
                 totalAdTime = round(s / 60, 2)
                 if replayButton == 'Replay':
                     print('\nVideo Played in Full')
-                    print('It took {} hours and {} minutes to go through the entire video'.format(math.floor(hours), round(remainingMinutes)))
                     print('There were {} ads, totaling {} minutes'.format(ads, totalAdTime))
                     print('Restarting...\n')
                     browser.quit()
