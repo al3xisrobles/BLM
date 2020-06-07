@@ -6,155 +6,32 @@ from selenium.webdriver.common.keys import Keys
 
 print('\nBLM "Watch" Script Starting...\n')
 
-# Find XPath For 'Skip Ad' Element
-def skipAdXPath(browser):
-
-    first = '//*[@id="player-overlay:'
-    second = '"]/div[2]'
-
-    for num in range(10, 50):
-        num = str(num)
-        try:
-            browser.find_element_by_xpath(first + num + second)
-            return True
-        except:
-            pass
-
-    # Letters (j)
-    for letter in alphabet:        
-        try:
-            browser.find_element_by_xpath(first + letter + second)
-            return True
-        except:
-            pass
-
-    # Combination (1j)
-    for letter in alphabet:
-        for num in range(10):
-            middle = str(num) + letter
-            try:
-                browser.find_element_by_xpath(first + middle + second)
-                return True
-            except:
-                pass
-
-    # 2 Letters (fu)
-    for l1 in alphabet:
-        for l2 in alphabet:
-            middle = l1 + l2
-            try:
-                browser.find_element_by_xpath(first + middle + second)
-                return True
-            except:
-                pass
-
-    return False
-
-# Find XPath of Duration Element
-def durationXPath(browser):
-
-    first = '//*[@id="ad-text:'
-    second = '"]'
-    # Numbers
-    for num in range(100):
-        num = str(num)
-        try:
-            dur = browser.find_element_by_xpath(first + num + second).text
-            if ':' in dur:
-                return dur, 0
-        except:
-            pass
-
-    # Letters
-    for letter in alphabet:
-        try:
-            dur = browser.find_element_by_xpath(first + letter + second).text
-            if ':' in dur:
-                return dur, 0
-        except:
-            pass
-
-    # Combination (1j)
-    for letter in alphabet:
-        for num in range(50):
-            middle = str(num) + letter
-            try:
-                dur = browser.find_element_by_xpath(first + middle + second).text
-                if ':' in dur:
-                    return dur, 10
-            except:
-                pass
+# Converts Seconds to Time
+def secToTime(sec):
+    hr = sec / 60 / 60
+    min = (hr % 1) * 60
+    sec = (min % 1) * 60
     
-    # Combination (j1)
-    for letter in alphabet:
-        for num in range(50):
-            middle = letter + str(num)
-            try:
-                dur = browser.find_element_by_xpath(first + middle + second).text
-                if ':' in dur:
-                    return dur, 15
-            except:
-                pass
-
-    # 2 Letters (fu)
-    for l1 in alphabet:
-        for l2 in alphabet:
-            middle = l1 + l2
-            try:
-                dur = browser.find_element_by_xpath(first + middle + second).text
-                if ':' in dur:
-                    return dur, 20
-            except:
-                pass
-
-    print('ERROR: AD PRESENT BUT NO DURATION ELEMENT ABLE TO BE DETECTED')
-    return 0
-
-# Test is there's an ad. If there is, add 1 to the "Ad Counter" and wait until the ad ends then continue on
-def numAds(browser, ads):
+    if hr == 0:
+        hr = '00'
+    else:
+        hr = str(math.floor(hr))
     
-    adNum = 1
-    ad = skipAdXPath(browser)
+    if min == 0:
+        min = '00'
+    elif min < 10:
+        min = '0' + str(math.floor(min))
+    else:
+        min = str(math.floor(min))
 
-    # If an ad played, add 1 to the counter and wait until the ad finishes
-    if ad == True:
-        t, d = durationXPath(browser)
-        if t != 0:
-            duration = timeToSeconds(t) + d
-            min = math.floor(duration / 60)
-            sec = duration - (min * 60)
+    if sec == 0:
+        sec = '00'
+    elif sec < 10:
+        sec = '0' + str(round(sec))
+    else:
+        sec = str(round(sec))
 
-            if sec < 10:
-                sec = '0' + str(sec)
-
-            print('Ad detected...Approx. Duration:', str(min) + ":" + str(sec))
-            adTimes.append(duration)
-            time.sleep(duration)
-        return 1
-    return 0
-
-def timeToSeconds(t):
-    for i, el in enumerate(t):
-        if el == ":":
-            index = i
-            break
-
-    # t = '3:46'
-    min = int(t[0 : index])
-    sec = int(t[index + 1:])
-    
-    totalSec = (60 * min) + sec
-    return totalSec
-    
-def sum(lst):
-    s = 0
-    for e in lst:
-        s += e
-    return s
-
-ads = 0
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-adTimes = []
+    return hr + ':' + min + ':' + sec
 
 # Plays the whole video with ads over and over (restarts after end)
 while True:
@@ -163,6 +40,7 @@ while True:
     browser.get("https://www.youtube.com/watch?v=bCgLa25fDHM")
     actions = ActionChains(browser)
     time.sleep(5)
+    seconds = 5
 
     # Get Title
     try:
@@ -184,7 +62,6 @@ while True:
 
     # Play Full Video and then Quit
     if broken == False:
-        seconds = 0
         time.sleep(5)
 
         # Loop to test if the "Replay" button exists yet (it only does when the video is over)
@@ -196,31 +73,22 @@ while True:
                 if title == "Play (k)":
                     print('Pressed Play')
                     actions.send_keys(Keys.SPACE).perform()
-                elif title == "Pause (k)":
-                    pass
-                else:
-                    browser.quit()
             except:
-                # Already Playing
+                # Already Playing or Video Ended
                 pass
-
-            # Test is there's an ad. If there is, add 1 to the "Ad Counter" and wait until the ad ends then continue on
-            ads += numAds(browser, ads)
 
             # Try to get 'Replay' element
             try:
                 replayButton = browser.find_element_by_xpath('//*[@id="movie_player"]/div[25]/div[2]/div[1]/button').get_attribute("title")
-                s = sum(adTimes)
-
-                totalAdTime = round(s / 60, 2)
                 if replayButton == 'Replay':
                     print('\nVideo Played in Full')
-                    print('There were {} ads, totaling {} minutes'.format(ads, totalAdTime))
+                    print('It took {} to play the entire video with ads'.format(secToTime(seconds)))
+                    print('Ad time totaled {}'.format(secToTime(seconds - 3386)))
                     print('Restarting...\n')
                     browser.quit()
                     break
             except:
                 pass
 
+            time.sleep(1)
             seconds += 1
-
