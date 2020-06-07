@@ -38,6 +38,16 @@ def skipAdXPath(browser):
             except:
                 pass
 
+    # 2 Letters (fu)
+    for l1 in alphabet:
+        for l2 in alphabet:
+            middle = l1 + l2
+            try:
+                browser.find_element_by_xpath(first + middle + second)
+                return True
+            except:
+                pass
+
     return False
 
 # Find XPath of Duration Element
@@ -86,7 +96,7 @@ def durationXPath(browser):
             except:
                 pass
 
-    # Combination (1j)
+    # 2 Letters (fu)
     for l1 in alphabet:
         for l2 in alphabet:
             middle = l1 + l2
@@ -117,7 +127,7 @@ def numAds(browser, ads):
             if sec < 10:
                 sec = '0' + str(sec)
 
-            print('Ad detected...Duration:', str(min) + ":" + str(sec))
+            print('Ad detected...Approx. Duration:', str(min) + ":" + str(sec))
             adTimes.append(duration)
             time.sleep(duration)
         return 1
@@ -134,7 +144,7 @@ def timeToSeconds(t):
     sec = int(t[index + 1:])
     
     totalSec = (60 * min) + sec
-    return totalSec + 10
+    return totalSec
     
 def sum(lst):
     s = 0
@@ -172,10 +182,6 @@ while True:
             broken = True
             browser.quit()
 
-    # Mute Audio
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--mute-audio")
-
     # Play Full Video and then Quit
     if broken == False:
         seconds = 0
@@ -183,6 +189,20 @@ while True:
 
         # Loop to test if the "Replay" button exists yet (it only does when the video is over)
         while True:
+
+            # Get Title
+            try:
+                title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[22]/div[2]/div[1]/button').get_attribute("title")
+                if title == "Play (k)":
+                    print('Pressed Play')
+                    actions.send_keys(Keys.SPACE).perform()
+                elif title == "Pause (k)":
+                    pass
+                else:
+                    browser.quit()
+            except:
+                # Already Playing
+                pass
 
             # Test is there's an ad. If there is, add 1 to the "Ad Counter" and wait until the ad ends then continue on
             ads += numAds(browser, ads)
