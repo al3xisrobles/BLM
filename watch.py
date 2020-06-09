@@ -54,20 +54,23 @@ while True:
         title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[22]/div[2]/div[1]/button').get_attribute("title")
     except:
         try:
-            title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[24]/div[2]/div[1]/button').get_attribute("title")        
+            title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[23]/div[2]/div[1]/button').get_attribute("title")        
         except:
-            pass
+            try:
+                title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[24]/div[2]/div[1]/button').get_attribute("title")        
+            except:
+                pass
 
     # Press Space Again?
-
-    if title == "Play (k)":
-        print('Pressed Play')
-        actions.send_keys(Keys.SPACE).perform()
-    elif title == "Pause (k)":
-        pass
-    else:
-        broken = True
-        browser.quit()
+    if 'title' in globals() or 'title' in locals():
+        if title == "Play (k)":
+            print('Pressed Play')
+            actions.send_keys(Keys.SPACE).perform()
+        elif title == "Pause (k)":
+            pass
+        else:
+            broken = True
+            browser.quit()
 
     # Play Full Video and then Quit
     if broken == False:
