@@ -12,7 +12,7 @@ print('\nBLM "Watch" Script Starting...\n')
 def findReplayXPath():
     first = '//*[@id="movie_player"]/div['
     second = ']/div[2]/div[1]/button'
-    for num in range(24, 26):
+    for num in range(28, 34):
         try:
             replayButton = browser.find_element_by_xpath(first + str(num) + second).get_attribute("title")
             return replayButton
@@ -28,6 +28,21 @@ def adTime(totalRunTime):
         return str(td(seconds = secDiff))
     else:
         return '(no ads were detected or the video was cut short)'
+
+def titleAttribute(browser):
+    try:
+        return browser.find_element_by_xpath('//*[@id="movie_player"]/div[31]/div[2]/div[1]/button').get_attribute("title")
+    except:
+        try:
+            return browser.find_element_by_xpath('//*[@id="movie_player"]/div[22]/div[2]/div[1]/button').get_attribute("title")        
+        except:
+            try:
+                return browser.find_element_by_xpath('//*[@id="movie_player"]/div[23]/div[2]/div[1]/button').get_attribute("title")        
+            except:
+                try:
+                    return browser.find_element_by_xpath('//*[@id="movie_player"]/div[24]/div[2]/div[1]/button').get_attribute("title")        
+                except:
+                    pass
 
 def end():
     print('\nVideo Played in Full')
@@ -45,21 +60,12 @@ while True:
     go = True
     broken = False
     browser = webdriver.Chrome("Desktop/Programming/Scripts/BLM/BLM/chromedriver")
-    browser.get("https://www.youtube.com/watch?v=bCgLa25fDHM")
+    browser.get("https://www.youtube.com/watch?v=vPC0J9z92-0")
     actions = ActionChains(browser)
     time.sleep(5)
 
-    # Get Title
-    try:
-        title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[22]/div[2]/div[1]/button').get_attribute("title")
-    except:
-        try:
-            title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[23]/div[2]/div[1]/button').get_attribute("title")        
-        except:
-            try:
-                title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[24]/div[2]/div[1]/button').get_attribute("title")        
-            except:
-                pass
+    # Get Play Attribute 'Title'
+    title = titleAttribute(browser)
 
     # Press Space Again?
     if 'title' in globals() or 'title' in locals():
@@ -70,6 +76,7 @@ while True:
             pass
         else:
             broken = True
+            print('Could not find play button...restarting')
             browser.quit()
 
     # Play Full Video and then Quit
@@ -82,14 +89,9 @@ while True:
         # Loop to test if the "Replay" button exists yet (it only does when the video is over)
         while go:
 
-            if browser.current_url != 'https://www.youtube.com/watch?v=bCgLa25fDHM':
-                print(browser.current_url)
-                print('Went to the wrong video')
-                end()
-
             # Get Title
             try:
-                title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[25]/div[2]/div[1]/button').get_attribute("title")
+                title = browser.find_element_by_xpath('//*[@id="movie_player"]/div[31]/div[2]/div[1]/button').get_attribute("title")
                 if title == "Play (k)":
                     print('Pressed Play')
                     actions.send_keys(Keys.SPACE).perform()
